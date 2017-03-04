@@ -15,7 +15,7 @@ I use this in conjunction with git to synchronize my tags. In ``~/.gitconfig``:
 
 	[merge "notmuchtags"]
 		name = Notmuch tag merge driver
-		driver = nmtagmerge %O %B %A %A
+		driver = notmuch-sync %O %B %A %A
 		recursive = binary
 
 And then in ``.gitattributes`` at the root of the repo:
