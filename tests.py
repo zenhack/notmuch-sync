@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import unittest
-from notmuch_sync import main
+from notmuch_sync import main, merge, Dump
 from io import StringIO
 
 
@@ -81,3 +81,42 @@ class TestUsage(unittest.TestCase):
             self.fail("main didn't call open.")
         except PassNow:
             pass
+
+
+class TestMerge(unittest.TestCase):
+
+    def _test_merge(self, ancestor, left, right, result):
+        ancestor = Dump(ancestor)
+        left = Dump(left)
+        right = Dump(right)
+        result = Dump(result)
+
+        self.assertEqual(merge(ancestor, left, right), result)
+        self.assertEqual(merge(ancestor, right, left), result)
+
+    def _test_one(self, old, new, result):
+        self._test_merge(old, old, new, result)
+
+    def _test_both(self, old, new, result):
+        self._test_merge(old, new, new, result)
+
+    def test_all_empty(self):
+        self._test_merge({}, {}, {}, {})
+
+    def test_add(self):
+        new = {'a': {'b', 'c', 'd'}}
+        self._test_one({}, new, new)
+        self._test_both({}, new, new)
+
+    def test_del(self):
+        old = {'a': {'b', 'c', 'd'}}
+        self._test_one(old, {}, {'a': set()})
+        self._test_both(old, {}, {'a': set()})
+
+    def test_add_bothsides(self):
+        self._test_merge(
+            {'a': {'1', '2'}},
+            {'a': {'1', '2'}, 'b': {'3'}},
+            {'a': {'1', '2', '7'}},
+            {'a': {'1', '2', '7'}, 'b': {'3'}},
+        )

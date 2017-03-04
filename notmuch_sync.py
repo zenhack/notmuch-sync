@@ -4,8 +4,8 @@ import sys
 
 class Dump(defaultdict):
 
-    def __init__(self):
-        defaultdict.__init__(self, lambda: set())
+    def __init__(self, *args, **kwargs):
+        defaultdict.__init__(self, lambda: set(), *args, **kwargs)
 
     @staticmethod
     def from_filename(filename, _open=open):
