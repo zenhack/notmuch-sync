@@ -7,12 +7,12 @@ class Dump(defaultdict):
     def __init__(self):
         defaultdict.__init__(self, lambda: set())
 
-    @classmethod
+    @staticmethod
     def from_filename(filename, _open=open):
         with _open(filename) as f:
             return Dump.read_from(f)
 
-    @classmethod
+    @staticmethod
     def read_from(f):
         text = f.read()
         lines = text.split('\n')
@@ -50,7 +50,7 @@ def merge(ancestor, left, right):
 def main(argv=sys.argv, exit=exit, stderr=sys.stderr, open=open):
     if len(argv) != 5:
         stderr.write(
-            "usage: '%s <ancestor> <left> <right> <result>\n" % argv[0]
+            "usage: %s <ancestor> <left> <right> <result>\n" % argv[0]
         )
         exit(1)
     ancestor, left, right, out = [Dump.from_filename(fname, _open=open)
