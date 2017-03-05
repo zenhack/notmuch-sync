@@ -1,3 +1,5 @@
+|Build Status|
+
 notmuch-sync
 ============
 
@@ -50,3 +52,6 @@ License
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+.. |Build Status| image:: https://travis-ci.org/zenhack/notmuch-sync.svg?branch=master
+   :target: https://travis-ci.org/zenhack/notmuch-sync
