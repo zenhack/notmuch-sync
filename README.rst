@@ -3,9 +3,9 @@
 notmuch-sync
 ============
 
-``notmuch-sync`` is a toolbox for syncronizing mail setups of `notmuch
-<https://notmuchmail.org/>`_. Right now all it contains is a 3-way
-merge tool for the output of ``notmuch-dump(1)``:
+``notmuch-sync`` is a toolbox for syncronizing mail setups of `notmuch`_.
+Right now all it contains is a 3-way merge tool for the output of
+``notmuch-dump(1)``:
 
 ::
 
@@ -55,3 +55,5 @@ License
 
 .. |Build Status| image:: https://travis-ci.org/zenhack/notmuch-sync.svg?branch=master
    :target: https://travis-ci.org/zenhack/notmuch-sync
+
+.. _notmuch: https://notmuchmail.org/
