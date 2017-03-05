@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import unittest
-from notmuch_sync import main, merge, Dump
+from notmuch_sync.dump import main, merge, Dump
 from io import StringIO
 
 
@@ -120,3 +120,38 @@ class TestMerge(unittest.TestCase):
             {'a': {'1', '2', '7'}},
             {'a': {'1', '2', '7'}, 'b': {'3'}},
         )
+
+
+class TestSerialize(unittest.TestCase):
+    """test parsing of dump files"""
+
+    def setUp(self):
+        # Sample data is misc. messages from a search of "notmuch" in
+        # my(zenhack's) inbox.
+        self.text = (
+            "+attachment +lists +lists%2fdev-parabolagnulinux -- id:4E30C88C.7050403@dervormund.info\n"
+            "+aur-general +lists +lists%2faur-general +signed -- id:87livmk4p8.fsf@gmail.com\n"
+            "+aur-general +lists +lists%2faur-general -- id:CAJbzwsGFTVnTcuxzqVsaMafXecF_q4X9nuHBxr3v60ANmMhWkg@mail.gmail.com\n"
+            "-- id:CAJbzwsFPSgPZC3pUKgNk2o=sSJv4RRXGNTs_Ziui785d6Z9E6g@mail.gmail.com\n"
+            "+sent +signed -- id:20141118024251.600.71569@rook.local.tld\n"
+        )
+        self.value = Dump({
+            "id:4E30C88C.7050403@dervormund.info": set(['attachment', 'lists', 'lists%2fdev-parabolagnulinux']),
+            "id:87livmk4p8.fsf@gmail.com": set(['aur-general', 'lists', 'lists%2faur-general', 'signed']),
+            "id:CAJbzwsGFTVnTcuxzqVsaMafXecF_q4X9nuHBxr3v60ANmMhWkg@mail.gmail.com": set(['aur-general', 'lists', 'lists%2faur-general']),
+            "id:CAJbzwsFPSgPZC3pUKgNk2o=sSJv4RRXGNTs_Ziui785d6Z9E6g@mail.gmail.com": set(),
+            "id:20141118024251.600.71569@rook.local.tld": set(['sent', 'signed']),
+        })
+        self.maxDiff = None
+
+    def test_parse(self):
+        """Verify that the sample text parses to the right value."""
+        self.assertEqual(Dump.loads(self.text), self.value)
+
+    # TODO: It would be nice to test that self.value.dumps() == self.text,
+    # but this doesn't quite work, since order is insignificant. I'd like to
+    # find a weaker constraint that still gives us some assurance.
+
+    def test_re_read(self):
+        """Verify that writing out and then reading in a Dump is a no op."""
+        self.assertEqual(Dump.loads(self.value.dumps()), self.value)

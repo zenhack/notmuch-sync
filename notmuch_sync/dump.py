@@ -1,4 +1,5 @@
 from collections import defaultdict
+from io import StringIO
 import sys
 
 
@@ -14,7 +15,10 @@ class Dump(defaultdict):
 
     @staticmethod
     def read_from(f):
-        text = f.read()
+        return Dump.loads(f.read())
+
+    @staticmethod
+    def loads(text):
         lines = text.split('\n')
         lines = [line.split() for line in lines]
         dump_dict = Dump()
@@ -23,13 +27,19 @@ class Dump(defaultdict):
                 continue
             ident = line.pop()
             line.pop()  # get rid of the '--' delimiter
+            line = [tag[1:] for tag in line]  # strip off the leading '+'
             dump_dict[ident] = set(line)
         return dump_dict
 
     def write_to(self, f):
         for key in self.keys():
-            f.write(' '.join(list(self[key]) + ['--', key, '\n']))
-        f.close()
+            tags = ['+' + tag for tag in self[key]]
+            f.write(' '.join(tags + ['--', key, '\n']))
+
+    def dumps(self):
+        f = StringIO()
+        self.write_to(f)
+        return f.getvalue()
 
 
 def merge(ancestor, left, right):
